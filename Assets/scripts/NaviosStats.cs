@@ -2,67 +2,74 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Pieza { Uno, Dos, Tres, MaxPiezas_2D }
 public class NaviosStats : MonoBehaviour
 {
     public enum TypeAtk { TERR, AER, DUAL, MAXTYPE }
     public class Navios
     {  
         public string Name;
-        public int ATK, DEF, VEL, SON;
+        public int ATK, DEF, VEL, SON, HP;
         public TypeAtk typeAtk;
+        public Pieza typePieza;
         public GameObject pf;
     }
-    public List<Navios> AllNavios = new List<Navios>()
+    public static List<Navios> AllNavios = new List<Navios>()
     {
         //Destructor
         new Navios
         {
-            Name="",
-            ATK=0,
-            DEF=0,
-            VEL=0,
-            SON=0,
-            typeAtk=TypeAtk.MAXTYPE
+            Name="Destructor",
+            ATK=3,
+            DEF=2,
+            VEL=2,
+            SON=2,
+            typeAtk=TypeAtk.DUAL,
+            typePieza= Pieza.Uno
         },
         //Fragata
         new Navios
         {
-            Name="",
-            ATK=0,
-            DEF=0,
-            VEL=0,
-            SON=0,
-            typeAtk=TypeAtk.MAXTYPE
+           Name="Fragata",
+            ATK=1,
+            DEF=1,
+            VEL=3,
+            SON=1,
+            typeAtk=TypeAtk.TERR,
+            typePieza= Pieza.Uno
         },
         //Submarino
         new Navios
         {
-            Name="",
-            ATK=0,
-            DEF=0,
-            VEL=0,
-            SON=0,
-            typeAtk=TypeAtk.MAXTYPE
+            Name="Submarino",
+            ATK=2,
+            DEF=1,
+            VEL=2,
+            SON=3,
+            typeAtk=TypeAtk.TERR,
+            typePieza= Pieza.Dos
         },
         //Acorazado
         new Navios
         {
-            Name="",
-            ATK=0,
-            DEF=0,
-            VEL=0,
-            SON=0,
-            typeAtk=TypeAtk.MAXTYPE
+            Name="Acorazado",
+            ATK=2,
+            DEF=3,
+            VEL=1,
+            SON=2,
+            typeAtk=TypeAtk.TERR,
+            typePieza= Pieza.Dos
         },
         //Portaviones
         new Navios
         {
-            Name="",
-            ATK=0,
-            DEF=0,
-            VEL=0,
-            SON=0,
-            typeAtk=TypeAtk.MAXTYPE
+            Name="Portaviones",
+            ATK=1,
+            DEF=3,
+            VEL=1,
+            SON=3,
+            typeAtk=TypeAtk.DUAL,
+            typePieza= Pieza.Tres
         }
 
 

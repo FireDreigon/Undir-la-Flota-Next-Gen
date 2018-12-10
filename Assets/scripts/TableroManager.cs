@@ -5,9 +5,8 @@ using UnityEngine.UI;
 
 public class TableroManager : MonoBehaviour
 {
-
-    public enum Pieza { Uno, Dos, Tres, MaxPiezas_2D }
-    public Pieza TypePieza;
+    private int CurrentNavioID;
+    public Dropdown NaviosDropDown;
     public List<GameObject> Piezas_2D, Piezas_3D;
     public GameObject Ranura2D, Ranura3D;
     private GameObject CurrentPieza;
@@ -73,11 +72,19 @@ public class TableroManager : MonoBehaviour
         Tablero_2D = InstantiatePoint2D.transform.GetChild(0).gameObject;
         Tablero_3D = InstantiatePoint3D.transform.parent.gameObject;
         CreatCoordenadasMap();
+        for (int i = 0; i < NaviosStats.AllNavios.Count; i++)
+        {
+            List<string> AllNavioNames= new List<string>();
+            AllNavioNames.Add(NaviosStats.AllNavios[i].Name);
+            NaviosDropDown.AddOptions(AllNavioNames);
+        }
+            
     }
 
     // Update is called once per frame
     void Update()
     {
+        CurrentNavioID = NaviosDropDown.value;
         if (CanEdit == true)
             if (currentNavio.Pf != null)
             {
@@ -87,13 +94,13 @@ public class TableroManager : MonoBehaviour
                     CoolDownMov += Time.deltaTime;
                 if (currentNavio.CanStay)
                     if (Input.GetKeyDown(KeyCode.Return))
-                    {
+                    { 
                         for (int i = 0; i < currentNavio.Pf.transform.childCount; i++)
                         {
                             currentNavio.Pf.transform.GetChild(i).GetComponent<Image>().color -= Color.green;
                         }
 
-                        GameObject NewNavio3D = Instantiate(Piezas_3D[(int)TypePieza], Tablero_3D.transform, false);
+                        GameObject NewNavio3D = Instantiate(Piezas_3D[(int)NaviosStats.AllNavios[CurrentNavioID].typePieza], Tablero_3D.transform, false);
                         Vector3 NewPos = coordenadasMap[currentNavio.X].AllCordenadas[currentNavio.Y].Coordenada_3D;
                         NewPos.x += -5;
                         NewPos.z += 5;
@@ -187,9 +194,9 @@ public class TableroManager : MonoBehaviour
             else
              if (Input.GetKeyDown(KeyCode.Tab))
             {
-                CurrentPieza = Instantiate(Piezas_2D[(int)TypePieza], InstantiatePoint2D.transform, false);
+                CurrentPieza = Instantiate(Piezas_2D[(int)NaviosStats.AllNavios[CurrentNavioID].typePieza], InstantiatePoint2D.transform, false);
                 CurrentPieza.transform.localPosition = coordenadasMap[9].AllCordenadas[9].Coordenada_2D;
-                currentNavio = new CoordernadasActuales(9, 9, CurrentPieza, TypePieza);
+                currentNavio = new CoordernadasActuales(9, 9, CurrentPieza, NaviosStats.AllNavios[CurrentNavioID].typePieza);
                 for (int i = 0; i < currentNavio.Pf.transform.childCount; i++)
                 {
                     currentNavio.Pf.transform.GetChild(i).GetComponent<Image>().color += Color.green;
