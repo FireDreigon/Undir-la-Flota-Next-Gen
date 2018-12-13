@@ -33,15 +33,19 @@ public class Manager_Temp : MonoBehaviour
     }
     private List<CoordenadasMap> coordenadasMap = new List<CoordenadasMap>();
     public int Cuadrado;
+    public PlayerInterfazControll CanvasManager;
 
-    public List<NaviosStats> myNavios;
-    public NaviosStats currentNavio;
+    public List<NaviosStats.Navios> myNavios;
+    public NaviosStats.Navios currentNavio;
     // Use this for initialization
     void Start()
     {
+        CanvasManager = transform.GetComponentInChildren<PlayerInterfazControll>();
         InstantiatePoint2D = GameObject.Find("InstantiatePoint2D");
         Tablero_2D = InstantiatePoint2D.transform.GetChild(0).gameObject;
         CreatCoordenadasMap();
+        CanvasManager.NewCurrentNavio();
+        CanvasManager.ChangeOption((PlayerInterfazControll.Options)0);
     }
 
     // Update is called once per frame

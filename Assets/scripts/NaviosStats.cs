@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum Pieza { Uno, Dos, Tres, MaxPiezas_2D }
-public class NaviosStats : MonoBehaviour
+public class NaviosStats 
 {
-    public enum TypeAtk { TERR, AER, DUAL, MAXTYPE }
-    public class Navios
+    public enum TypeAtk { TERR, AER, DUAL, MAXTYPE } 
+    [System.Serializable]
+    public  class Navios
     {  
         public string Name;
-        public int ATK, DEF, VEL, SON, HP;
+        public int ATK, DEF, VEL, SON, HP,MaxHP;
         public TypeAtk typeAtk;
         public Pieza typePieza;
         public GameObject pf;
@@ -24,6 +25,7 @@ public class NaviosStats : MonoBehaviour
             DEF=2,
             VEL=2,
             SON=2,
+            MaxHP=2,
             typeAtk=TypeAtk.DUAL,
             typePieza= Pieza.Uno
         },
@@ -35,6 +37,7 @@ public class NaviosStats : MonoBehaviour
             DEF=1,
             VEL=3,
             SON=1,
+            MaxHP=2,
             typeAtk=TypeAtk.TERR,
             typePieza= Pieza.Uno
         },
@@ -46,6 +49,7 @@ public class NaviosStats : MonoBehaviour
             DEF=1,
             VEL=2,
             SON=3,
+            MaxHP=6,
             typeAtk=TypeAtk.TERR,
             typePieza= Pieza.Dos
         },
@@ -57,6 +61,7 @@ public class NaviosStats : MonoBehaviour
             DEF=3,
             VEL=1,
             SON=2,
+            MaxHP=6,
             typeAtk=TypeAtk.TERR,
             typePieza= Pieza.Dos
         },
@@ -68,6 +73,7 @@ public class NaviosStats : MonoBehaviour
             DEF=3,
             VEL=1,
             SON=3,
+            MaxHP=10,
             typeAtk=TypeAtk.DUAL,
             typePieza= Pieza.Tres
         }
