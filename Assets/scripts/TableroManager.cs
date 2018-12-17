@@ -10,7 +10,7 @@ public class TableroManager : MonoBehaviour
     public List<GameObject> Piezas_2D, Piezas_3D;
     public GameObject Ranura2D, Ranura3D;
     private GameObject CurrentPieza;
-    private GameObject Tablero_2D,Tablero_3D, InstantiatePoint2D, InstantiatePoint3D;
+    private GameObject Tablero_2D, Tablero_3D, InstantiatePoint2D, InstantiatePoint3D;
 
     public int Cuadrado;
 
@@ -64,6 +64,8 @@ public class TableroManager : MonoBehaviour
     private float CoolDownMov;
 
     private bool CanEdit = true;
+
+    public PlayerControll playerControll;
     // Use this for initialization
     void Start()
     {
@@ -72,138 +74,154 @@ public class TableroManager : MonoBehaviour
         Tablero_2D = InstantiatePoint2D.transform.GetChild(0).gameObject;
         Tablero_3D = InstantiatePoint3D.transform.parent.gameObject;
         CreatCoordenadasMap();
+        GameObject NewPlayer = new GameObject("Player");
+        playerControll = NewPlayer.AddComponent<PlayerControll>();
         for (int i = 0; i < NaviosStats.AllNavios.Count; i++)
         {
-            List<string> AllNavioNames= new List<string>();
+            List<string> AllNavioNames = new List<string>();
             AllNavioNames.Add(NaviosStats.AllNavios[i].Name);
             NaviosDropDown.AddOptions(AllNavioNames);
         }
-            
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        CurrentNavioID = NaviosDropDown.value;
-        if (CanEdit == true)
-            if (currentNavio.Pf != null)
-            {
-                if (CoolDownMov > 0.1f)
-                    MoveNavio();
-                else
-                    CoolDownMov += Time.deltaTime;
-                if (currentNavio.CanStay)
-                    if (Input.GetKeyDown(KeyCode.Return))
-                    { 
-                        for (int i = 0; i < currentNavio.Pf.transform.childCount; i++)
-                        {
-                            currentNavio.Pf.transform.GetChild(i).GetComponent<Image>().color -= Color.green;
-                        }
-
-                        GameObject NewNavio3D = Instantiate(Piezas_3D[(int)NaviosStats.AllNavios[CurrentNavioID].typePieza], Tablero_3D.transform, false);
-                        Vector3 NewPos = coordenadasMap[currentNavio.X].AllCordenadas[currentNavio.Y].Coordenada_3D;
-                        NewPos.x += -5;
-                        NewPos.z += 5;
-                        NewPos.y += 6;
-                        NewNavio3D.transform.localPosition = NewPos;
-
-                        switch (currentNavio.typePieza)
-                        {                             
-                            case Pieza.Uno:                       
-                                coordenadasMap[currentNavio.X].AllCordenadas[currentNavio.Y].FixCanStay = false;
-                                break;
-                            case Pieza.Dos:
-                                switch (currentNavio.horientacion)
-                                {
-                                    case CoordernadasActuales.Horientacion.V:
-                                        for (int i = currentNavio.Y - 1; i < currentNavio.Y + 2; i++)
-                                            coordenadasMap[currentNavio.X].AllCordenadas[i].FixCanStay = false;
-                                        break;
-                                    case CoordernadasActuales.Horientacion.H:
-                                        for (int i = currentNavio.X - 1; i < currentNavio.X + 2; i++)
-                                            coordenadasMap[i].AllCordenadas[currentNavio.Y].FixCanStay = false;
-                                        break;
-                                }
-                                break;
-                            case Pieza.Tres:
-                                switch (currentNavio.horientacion)
-                                {
-                                    case CoordernadasActuales.Horientacion.V:
-                                        for (int i = currentNavio.Y - 2; i < currentNavio.Y + 3; i++)
-                                            coordenadasMap[currentNavio.X].AllCordenadas[i].FixCanStay = false;
-                                        break;
-                                    case CoordernadasActuales.Horientacion.H:
-                                        for (int i = currentNavio.X - 2; i < currentNavio.X + 3; i++)
-                                            coordenadasMap[i].AllCordenadas[currentNavio.Y].FixCanStay = false;
-                                        break;
-                                }
-                                break;
-                        }
-                        switch (currentNavio.direccion)
-                        {
-                            case CoordernadasActuales.Direccion.N:
-                                NewNavio3D.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                                break;
-                            case CoordernadasActuales.Direccion.E:
-                                NewNavio3D.transform.localRotation = Quaternion.Euler(0, 90, 0);
-                                break;
-                            case CoordernadasActuales.Direccion.S:
-                                NewNavio3D.transform.localRotation = Quaternion.Euler(0, 180, 0);
-                                break;
-                            case CoordernadasActuales.Direccion.W:
-                                NewNavio3D.transform.localRotation = Quaternion.Euler(0, 270, 0);
-                                break;
-                        }
-                        currentNavio.Pf = null;
-                    }
-                if (Input.GetKeyDown(KeyCode.E))
-                    try
-                    {
-                        ResetPos();
-                        RootNavio(1);
-                        ChangeColor(CanStay());
-                    }
-                    catch
-                    {
-                        print("No se puede rotar porque entra en conflicto en algun punto");
-                        for (int i = 0; i < coordenadasMap.Count; i++)
-                            for (int j = 0; j < coordenadasMap[i].AllCordenadas.Count; j++)
-                                if (!coordenadasMap[i].AllCordenadas[j].CanStay && coordenadasMap[i].AllCordenadas[j].FixCanStay)
-                                    coordenadasMap[i].AllCordenadas[j].CanStay = true;
-                        RootNavio(-1);
-                        ChangeColor(CanStay());
-                    }
-                if (Input.GetKeyDown(KeyCode.Q))
-                    try
-                    {
-                        ResetPos();
-                        RootNavio(-1);
-                        ChangeColor(CanStay());
-                    }
-                    catch
-                    {
-                        print("No se puede rotar porque entra en conflicto en algun punto");
-                        for (int i = 0; i < coordenadasMap.Count; i++)
-                            for (int j = 0; j < coordenadasMap[i].AllCordenadas.Count; j++)
-                                if (!coordenadasMap[i].AllCordenadas[j].CanStay && coordenadasMap[i].AllCordenadas[j].FixCanStay)
-                                    coordenadasMap[i].AllCordenadas[j].CanStay = true;
-                        RootNavio(1);
-                        ChangeColor(CanStay());
-                    }
-            }
-            else
-             if (Input.GetKeyDown(KeyCode.Tab))
-            {
-                CurrentPieza = Instantiate(Piezas_2D[(int)NaviosStats.AllNavios[CurrentNavioID].typePieza], InstantiatePoint2D.transform, false);
-                CurrentPieza.transform.localPosition = coordenadasMap[9].AllCordenadas[9].Coordenada_2D;
-                currentNavio = new CoordernadasActuales(9, 9, CurrentPieza, NaviosStats.AllNavios[CurrentNavioID].typePieza);
-                for (int i = 0; i < currentNavio.Pf.transform.childCount; i++)
+        if (playerControll.myNavios.Count < 5)
+        {
+            if (CanEdit == true)
+                if (currentNavio.Pf != null)
                 {
-                    currentNavio.Pf.transform.GetChild(i).GetComponent<Image>().color += Color.green;
-                }
-                ChangeColor(CanStay());
-            }
+                    if (CoolDownMov > 0.1f)
+                        MoveNavio();
+                    else
+                        CoolDownMov += Time.deltaTime;
+                    if (currentNavio.CanStay)
+                        if (Input.GetKeyDown(KeyCode.Return))
+                        {
+                            for (int i = 0; i < currentNavio.Pf.transform.childCount; i++)
+                            {
+                                currentNavio.Pf.transform.GetChild(i).GetComponent<Image>().color -= Color.green;
+                            }
 
+                            GameObject NewNavio3D = Instantiate(Piezas_3D[(int)NaviosStats.AllNavios[CurrentNavioID].typePieza], Tablero_3D.transform, false);
+                            Vector3 NewPos = coordenadasMap[currentNavio.X].AllCordenadas[currentNavio.Y].Coordenada_3D;
+                            NewPos.x += -5;
+                            NewPos.z += 5;
+                            NewPos.y += 6;
+                            NewNavio3D.transform.localPosition = NewPos;
+
+                            switch (currentNavio.typePieza)
+                            {
+                                case Pieza.Uno:
+                                    coordenadasMap[currentNavio.X].AllCordenadas[currentNavio.Y].FixCanStay = false;
+                                    break;
+                                case Pieza.Dos:
+                                    switch (currentNavio.horientacion)
+                                    {
+                                        case CoordernadasActuales.Horientacion.V:
+                                            for (int i = currentNavio.Y - 1; i < currentNavio.Y + 2; i++)
+                                                coordenadasMap[currentNavio.X].AllCordenadas[i].FixCanStay = false;
+                                            break;
+                                        case CoordernadasActuales.Horientacion.H:
+                                            for (int i = currentNavio.X - 1; i < currentNavio.X + 2; i++)
+                                                coordenadasMap[i].AllCordenadas[currentNavio.Y].FixCanStay = false;
+                                            break;
+                                    }
+                                    break;
+                                case Pieza.Tres:
+                                    switch (currentNavio.horientacion)
+                                    {
+                                        case CoordernadasActuales.Horientacion.V:
+                                            for (int i = currentNavio.Y - 2; i < currentNavio.Y + 3; i++)
+                                                coordenadasMap[currentNavio.X].AllCordenadas[i].FixCanStay = false;
+                                            break;
+                                        case CoordernadasActuales.Horientacion.H:
+                                            for (int i = currentNavio.X - 2; i < currentNavio.X + 3; i++)
+                                                coordenadasMap[i].AllCordenadas[currentNavio.Y].FixCanStay = false;
+                                            break;
+                                    }
+                                    break;
+                            }
+                            switch (currentNavio.direccion)
+                            {
+                                case CoordernadasActuales.Direccion.N:
+                                    NewNavio3D.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                                    break;
+                                case CoordernadasActuales.Direccion.E:
+                                    NewNavio3D.transform.localRotation = Quaternion.Euler(0, 90, 0);
+                                    break;
+                                case CoordernadasActuales.Direccion.S:
+                                    NewNavio3D.transform.localRotation = Quaternion.Euler(0, 180, 0);
+                                    break;
+                                case CoordernadasActuales.Direccion.W:
+                                    NewNavio3D.transform.localRotation = Quaternion.Euler(0, 270, 0);
+                                    break;
+                            }
+                            playerControll.myNavios.Add(new PlayerControll.Navio(NaviosStats.AllNavios[CurrentNavioID], currentNavio));
+                            
+                            playerControll.tableroManager = this;
+                            currentNavio.Pf = null;
+                        }
+                    if (Input.GetKeyDown(KeyCode.E))
+                        try
+                        {
+                            ResetPos();
+                            RootNavio(1);
+                            ChangeColor(CanStay());
+                        }
+                        catch
+                        {
+                            print("No se puede rotar porque entra en conflicto en algun punto");
+                            for (int i = 0; i < coordenadasMap.Count; i++)
+                                for (int j = 0; j < coordenadasMap[i].AllCordenadas.Count; j++)
+                                    if (!coordenadasMap[i].AllCordenadas[j].CanStay && coordenadasMap[i].AllCordenadas[j].FixCanStay)
+                                        coordenadasMap[i].AllCordenadas[j].CanStay = true;
+                            RootNavio(-1);
+                            ChangeColor(CanStay());
+                        }
+                    if (Input.GetKeyDown(KeyCode.Q))
+                        try
+                        {
+                            ResetPos();
+                            RootNavio(-1);
+                            ChangeColor(CanStay());
+                        }
+                        catch
+                        {
+                            print("No se puede rotar porque entra en conflicto en algun punto");
+                            for (int i = 0; i < coordenadasMap.Count; i++)
+                                for (int j = 0; j < coordenadasMap[i].AllCordenadas.Count; j++)
+                                    if (!coordenadasMap[i].AllCordenadas[j].CanStay && coordenadasMap[i].AllCordenadas[j].FixCanStay)
+                                        coordenadasMap[i].AllCordenadas[j].CanStay = true;
+                            RootNavio(1);
+                            ChangeColor(CanStay());
+                        }
+                }
+                else
+                 if (Input.GetKeyDown(KeyCode.Tab))
+                {
+                    CurrentNavioID = NaviosDropDown.value;
+                    CurrentPieza = Instantiate(Piezas_2D[(int)NaviosStats.AllNavios[CurrentNavioID].typePieza], InstantiatePoint2D.transform, false);
+                    CurrentPieza.transform.localPosition = coordenadasMap[9].AllCordenadas[9].Coordenada_2D;
+                    currentNavio = new CoordernadasActuales(9, 9, CurrentPieza, NaviosStats.AllNavios[CurrentNavioID].typePieza);
+                    for (int i = 0; i < currentNavio.Pf.transform.childCount; i++)
+                    {
+                        currentNavio.Pf.transform.GetChild(i).GetComponent<Image>().color += Color.green;
+                    }
+                    ChangeColor(CanStay());
+                }
+        }
+        else
+        { 
+            if (GameObject.Find("SelectNavios"))
+            {
+                //InstantiatePoint2D.SetActive(false);
+                GameObject.Find("SelectNavios").SetActive(false);
+            }
+            
+        }
 
     }
     public void CreatCoordenadasMap()
@@ -223,8 +241,8 @@ public class TableroManager : MonoBehaviour
                 NewPos2D.x += (1.47f + Ranura2D.GetComponent<RectTransform>().sizeDelta.x / 2) * (x + 1);
                 NewPos2D.y += -(1.47f + Ranura2D.GetComponent<RectTransform>().sizeDelta.y / 2) * (y + 1);
 
-                NewPos3D.x += Ranura3D.transform.localScale.y  * (x + 1);
-                NewPos3D.z += -Ranura3D.transform.localScale.z  * (y + 1);
+                NewPos3D.x += Ranura3D.transform.localScale.y * (x + 1);
+                NewPos3D.z += -Ranura3D.transform.localScale.z * (y + 1);
 
                 newCoordenadasList.Add(new CoordenadasMap.Coordenadas(y.ToString("00"), NewPos2D, NewPos3D));
 

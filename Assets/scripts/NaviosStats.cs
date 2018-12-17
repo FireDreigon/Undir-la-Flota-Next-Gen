@@ -7,7 +7,7 @@ public class NaviosStats
 {
     public enum TypeAtk { TERR, AER, DUAL, MAXTYPE } 
     [System.Serializable]
-    public  class Navios
+    public  class NaviosType
     {  
         public string Name;
         public int ATK, DEF, VEL, SON, HP,MaxHP;
@@ -15,10 +15,10 @@ public class NaviosStats
         public Pieza typePieza;
         public GameObject pf;
     }
-    public static List<Navios> AllNavios = new List<Navios>()
+    public static List<NaviosType> AllNavios = new List<NaviosType>()
     {
         //Destructor
-        new Navios
+        new NaviosType
         {
             Name="Destructor",
             ATK=3,
@@ -30,7 +30,7 @@ public class NaviosStats
             typePieza= Pieza.Uno
         },
         //Fragata
-        new Navios
+        new NaviosType
         {
            Name="Fragata",
             ATK=1,
@@ -42,7 +42,7 @@ public class NaviosStats
             typePieza= Pieza.Uno
         },
         //Submarino
-        new Navios
+        new NaviosType
         {
             Name="Submarino",
             ATK=2,
@@ -54,7 +54,7 @@ public class NaviosStats
             typePieza= Pieza.Dos
         },
         //Acorazado
-        new Navios
+        new NaviosType
         {
             Name="Acorazado",
             ATK=2,
@@ -66,7 +66,7 @@ public class NaviosStats
             typePieza= Pieza.Dos
         },
         //Portaviones
-        new Navios
+        new NaviosType
         {
             Name="Portaviones",
             ATK=1,

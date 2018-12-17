@@ -35,8 +35,8 @@ public class Manager_Temp : MonoBehaviour
     public int Cuadrado;
     public PlayerInterfazControll CanvasManager;
 
-    public List<NaviosStats.Navios> myNavios;
-    public NaviosStats.Navios currentNavio;
+    public List<NaviosStats.NaviosType> myNavios;
+    public NaviosStats.NaviosType currentNavio;
     // Use this for initialization
     void Start()
     {
