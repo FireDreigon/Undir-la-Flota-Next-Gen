@@ -13,10 +13,11 @@ public class PlayerInterfazControll : MonoBehaviour
     public Options CurrentOption;
     public Image Lifebarr, EnergiBarr;
     public Button Base, Mov_Back, Son_Front, Atk_TL, SAtak_TR;
-    public Manager_Temp PlayerControll;
+    public PlayerControll PlayerControll;
     public bool AnimBtnNow;
     public Animator AnimBtn;
     public float AnimBtnTime;
+
 
     public void Update()
     {
@@ -32,8 +33,8 @@ public class PlayerInterfazControll : MonoBehaviour
         }
     }
     public void NewCurrentNavio()
-    {
-        Lifebarr.fillAmount = (float) PlayerControll.currentNavio.HP / PlayerControll.currentNavio.MaxHP;
+    { 
+        Lifebarr.fillAmount = (float) PlayerControll.currentNavio.navioType.HP / PlayerControll.currentNavio.navioType.MaxHP;
     }   
     public void ChangeOption(Options newOption)
     {

@@ -10,8 +10,10 @@ public class TableroManager : MonoBehaviour
     public List<GameObject> Piezas_2D, Piezas_3D;
     public GameObject Ranura2D, Ranura3D;
     private GameObject CurrentPieza;
-    private GameObject Tablero_2D, Tablero_3D, InstantiatePoint2D, InstantiatePoint3D;
-
+    [HideInInspector]
+    public GameObject Tablero_2D, Tablero_3D, InstantiatePoint2D, InstantiatePoint3D;
+    [HideInInspector]
+    public GameObject PlayerInterfaz;
     public int Cuadrado;
 
     [System.Serializable]
@@ -65,17 +67,26 @@ public class TableroManager : MonoBehaviour
 
     private bool CanEdit = true;
 
+    public Vector3 PosMiniMap, ScaleMiniMap;
+
     public PlayerControll playerControll;
     // Use this for initialization
     void Start()
     {
         InstantiatePoint2D = GameObject.Find("InstantiatePoint2D");
         InstantiatePoint3D = GameObject.Find("InstantiateTablero3D");
+        PlayerInterfaz = GameObject.Find("Interfaze");
         Tablero_2D = InstantiatePoint2D.transform.GetChild(0).gameObject;
         Tablero_3D = InstantiatePoint3D.transform.parent.gameObject;
         CreatCoordenadasMap();
+
         GameObject NewPlayer = new GameObject("Player");
         playerControll = NewPlayer.AddComponent<PlayerControll>();
+        playerControll.tableroManager = this;
+        GameObject NewInterfaz = new GameObject("InterfazManager");
+        NewInterfaz.AddComponent<PlayerInterfazControll>();
+        NewInterfaz.transform.SetParent(NewPlayer.transform);
+
         for (int i = 0; i < NaviosStats.AllNavios.Count; i++)
         {
             List<string> AllNavioNames = new List<string>();
@@ -160,8 +171,6 @@ public class TableroManager : MonoBehaviour
                                     break;
                             }
                             playerControll.myNavios.Add(new PlayerControll.Navio(NaviosStats.AllNavios[CurrentNavioID], currentNavio));
-                            
-                            playerControll.tableroManager = this;
                             currentNavio.Pf = null;
                         }
                     if (Input.GetKeyDown(KeyCode.E))
@@ -214,13 +223,13 @@ public class TableroManager : MonoBehaviour
                 }
         }
         else
-        { 
+        {
             if (GameObject.Find("SelectNavios"))
             {
                 //InstantiatePoint2D.SetActive(false);
                 GameObject.Find("SelectNavios").SetActive(false);
             }
-            
+
         }
 
     }
